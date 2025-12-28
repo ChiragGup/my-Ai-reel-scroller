@@ -44,6 +44,8 @@ export async function POST(request) {
       description,
       videoUrl,
       thumbnailUrl,
+      ownerId: session.user.id,
+
       transformation: {
         height: 1920,
         width: 1080,

@@ -11,6 +11,13 @@ const NewVideoSchema = new mongoose.Schema(
     description: String,
     videoUrl: String,
     thumbnailUrl: String,
+
+    ownerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
     transformation: {
       height: {
         type: Number,
@@ -27,10 +34,9 @@ const NewVideoSchema = new mongoose.Schema(
       },
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
+
 
 // ✅ Use `model` to compile schema if not already compiled
 const Video = models.Video || model("Video", NewVideoSchema);

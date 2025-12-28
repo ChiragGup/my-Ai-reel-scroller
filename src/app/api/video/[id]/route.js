@@ -7,25 +7,38 @@ import { authOptions } from "@/helper/options";
 
 export async function DELETE(request, { params }) {
   try {
-    const { id } = await params; 
+    const { id } = params;
+
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     await ConnectToDb();
+
+    const video = await Video.findById(id);
+
+    if (!video) {
+      return NextResponse.json({ error: "Video not found" }, { status: 404 });
+    }
+
+    // 🔒 OWNERSHIP CHECK (THIS IS THE LINE YOU ASKED FOR)
+    if (video.ownerId.toString() !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     await Video.findByIdAndDelete(id);
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("DELETE VIDEO ERROR:", error);
-    return NextResponse.json(
-      { error: "Delete failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Delete failed" }, { status: 500 });
   }
 }
 
-
 export async function PUT(request, { params }) {
   try {
-    const { id } = await params;
+    const { id } = params;
 
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -44,6 +57,17 @@ export async function PUT(request, { params }) {
 
     await ConnectToDb();
 
+    const video = await Video.findById(id);
+
+    if (!video) {
+      return NextResponse.json({ error: "Video not found" }, { status: 404 });
+    }
+
+    // 🔒 OWNERSHIP CHECK (THIS IS THE LINE YOU ASKED FOR)
+    if (video.ownerId.toString() !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const updated = await Video.findByIdAndUpdate(
       id,
       {
@@ -57,10 +81,7 @@ export async function PUT(request, { params }) {
     return NextResponse.json(updated);
   } catch (error) {
     console.error("UPDATE VIDEO ERROR:", error);
-    return NextResponse.json(
-      { error: "Update failed" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Update failed" }, { status: 500 });
   }
 }
 
