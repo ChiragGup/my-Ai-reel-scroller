@@ -17,10 +17,7 @@ export default function Navbar() {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    // 👇 Server & first client render match
-    return null;
-  }
+  if (!mounted) return null;
 
   const handleUpload = () => {
     if (!session) router.push("/login");
@@ -59,6 +56,11 @@ export default function Navbar() {
             AI
           </Link>
 
+          {/* ✅ Dashboard added */}
+          <Link href="/dashboard" className="text-white font-semibold hover:text-yellow-300">
+            Dashboard
+          </Link>
+
           <button
             onClick={handleUpload}
             className="text-white font-semibold hover:text-yellow-300"
@@ -83,7 +85,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* MOBILE */}
+        {/* MOBILE MENU BUTTON */}
         <button
           className="md:hidden text-white text-2xl"
           onClick={() => setOpen(!open)}
@@ -92,6 +94,7 @@ export default function Navbar() {
         </button>
       </div>
 
+      {/* MOBILE MENU */}
       {open && (
         <div className="md:hidden bg-gradient-to-b from-purple-600 to-red-500 px-6 py-5 space-y-4">
           <Link href="/" onClick={() => setOpen(false)} className="block text-white">
@@ -104,6 +107,11 @@ export default function Navbar() {
 
           <Link href="/ai" onClick={() => setOpen(false)} className="block text-white">
             AI
+          </Link>
+
+          {/* ✅ Dashboard added */}
+          <Link href="/dashboard" onClick={() => setOpen(false)} className="block text-white">
+            Dashboard
           </Link>
 
           <button
